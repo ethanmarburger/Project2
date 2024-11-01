@@ -1,0 +1,149 @@
+---
+title: "Project2"
+format: html
+editor: visual
+---
+
+## Find Data You Are Interested In
+
+```{r}
+# Loading appropriate Packages
+library(tidyverse)
+library(ggplot2)
+```
+
+For my project I chose to use the Melbourne Housing Market full data set downloaded from Kaggle
+
+```{r}
+# Reading in Melbourne Houseing data (Full dataset)
+data <- read_csv("Melbourne_housing_FULL.csv")
+head(data)
+```
+
+## Prepare for Your App
+
+The data set appears to have missing values. We will omit lines that contain the missing elements. Additionally, we'll change the units for Type. 
+
+```{r}
+# Cleaning data set 
+data <- na.omit(data)
+head(data)
+```
+
+```{r}
+# Changing the units for Type
+data <- data |>
+  mutate(Type = recode(Type,
+                       "h" = "House",
+                       "u" = "Unit",
+                       "t" = "Townhouse"))
+unique(data$Type)
+```
+
+
+### Produce numerical and graphical summaries to investigate the data.
+
+1) One-way contingency tables
+
+```{r}
+# One-way contingency table for Suburb
+data |>
+  group_by(Suburb) |>
+  summarize(counts = n())
+```
+
+```{r}
+# One-way contingency table for SellerG (seller's name)
+data |>
+  group_by(SellerG) |>
+  summarize(counts = n())
+```
+
+2) Two-way contingency tables
+
+```{r}
+# Two-way contingency table for SellerG and Suburb
+# Shows us how many homes each seller sold per suburb
+data |>
+  group_by(SellerG, Suburb) |>
+  summarize(counts = n()) 
+```
+
+```{r}
+# Two-way contingency table for SellerG and Type
+# Shows us what type of homes sellers prefer
+data |>
+  group_by(SellerG, Type) |>
+  summarize(counts = n()) 
+```
+
+3) Numerical summaries (means, medians, sds, etc.) for quantitative variables at levels of categorical
+variables
+
+```{r}
+# Numerical summary of Price, Rooms, and yearBuilt by Type 
+
+data |>
+  group_by(Type) |>
+  select(Price, Rooms, YearBuilt) |>
+  summarize(across(where(is.numeric), 
+                   list("mean" = ~ mean(.x), "median" = ~ median(.x, na.rm = TRUE), "sd" = ~ sd(.x), "IQR" = ~ IQR(.x)), 
+                   .names = "{.fn}_{.col}"))
+```
+
+```{r}
+# Numerical summary of Price, Rooms, and Car by Suburb 
+# Shows us details about home/garage size and their price per suburb
+data |>
+  group_by(Suburb) |>
+  select(Price, Rooms, Car) |> 
+  summarize(across(where(is.numeric), 
+                   list("mean" = ~ mean(.x), "median" = ~ median(.x, na.rm = TRUE), "sd" = ~ sd(.x), "IQR" = ~ IQR(.x)), 
+                   .names = "{.fn}_{.col}"))
+```
+
+4) Create at least six plots to visualize the data
+
+```{r}
+# Box Plot: Price across Home Type
+bp <- ggplot(data |> drop_na(Price, Type))
+bp + geom_boxplot(aes(x = Type, y = Price, fill = Type)) +
+  labs(x = "Home Type", title = "Box Plot: Home Price by Type") +
+  scale_fill_discrete("Type") +
+  theme(plot.title = element_text(hjust = 0.5)) #centering title
+```
+
+```{r}
+# Scatter Plot with faceting: Price and Rooms across Type
+sp <- ggplot(data |> drop_na(Price, Rooms), aes(x = Rooms, y = Price, color = Type))
+sp + geom_point() +
+  labs(x = "Rooms", y = "Price", 
+       title = "Scatter Plot: Home Price and Number of Rooms by Type") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  facet_wrap(~ Type)
+```
+
+```{r}
+# Loading appropriate packages
+library(ggridges)
+library(viridis)
+
+# ggridges: Home Price by Council Area
+ggplot(data, aes(x = Price, y = CouncilArea)) +
+  geom_density_ridges_gradient(aes(fill = ..x..), scale = 3, rel_min_height = 0.01) +
+  scale_fill_viridis_c(name = "Price", option = "C") +
+  labs(title = "Home Price by Council Area", x = "Home Price", y = "City Council") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r}
+bc <- ggplot(data, aes(x = Regionname, fill = Type))
+bc + geom_bar(position = "stack") +
+  labs(title = "Stacked Bar Chart of Home Type by Region", 
+       x = "Region", 
+       y = "Count", 
+       fill = "Home Type") +
+  theme(plot.title = element_text(hjust = 0.5)) + # Center title
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate labels
+```
+
