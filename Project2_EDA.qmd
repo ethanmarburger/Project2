@@ -106,8 +106,8 @@ data |>
 
 ```{r}
 # Scatter Plot with faceting: Price and Rooms across Type
-sp <- ggplot(data, aes(x = Rooms, y = Price, color = Type))
-sp + geom_point() +
+scatter <- ggplot(data, aes(x = Rooms, y = Price, color = Type))
+scatter + geom_point() +
   labs(x = "Rooms", y = "Price", 
        title = "Scatter Plot: Home Price and Number of Rooms by Type") +
   theme(plot.title = element_text(hjust = 0.5)) +
@@ -120,16 +120,16 @@ library(ggridges)
 library(viridis)
 
 # ggridges: Home Price by Council Area
-ggplot(data, aes(x = Price, y = CouncilArea)) +
-  geom_density_ridges_gradient(aes(fill = ..x..), scale = 3, rel_min_height = 0.01) +
+ridges <- ggplot(data, aes(x = Price, y = CouncilArea))
+ridges + geom_density_ridges_gradient(aes(fill = ..x..), scale = 3, rel_min_height = 0.01) +
   scale_fill_viridis_c(name = "Price", option = "C") +
   labs(title = "Home Price by Council Area", x = "Home Price", y = "City Council") +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ```{r}
-bc <- ggplot(data, aes(x = Regionname, fill = Type))
-bc + geom_bar(position = "stack") +
+stacked <- ggplot(data, aes(x = Regionname, fill = Type))
+stacked + geom_bar(position = "stack") +
   labs(title = "Stacked Bar Chart of Home Type by Region", 
        x = "Region", 
        y = "Count", 
@@ -141,8 +141,8 @@ bc + geom_bar(position = "stack") +
 ```{r}
 # 2D bin Plot for type of home sold per seller in postal code 3067
 data2 <- data[data$Postcode == 3067, ] # Too much data
-h <- ggplot(data2, aes(x = SellerG, y = Type))
-h + geom_bin2d(binwidth = c(0.25, 500), alpha = 0.5, color = "black", fill = "blue", linetype = "solid", linewidth = 0.5) +
+bin <- ggplot(data2, aes(x = SellerG, y = Type))
+bin + geom_bin2d(binwidth = c(0.25, 500), alpha = 0.5, color = "black", fill = "blue", linetype = "solid", linewidth = 0.5) +
   labs(
     title = "Type of Home Sold per Seller in Postal Code 3067",
     x = "Seller",
@@ -151,8 +151,8 @@ h + geom_bin2d(binwidth = c(0.25, 500), alpha = 0.5, color = "black", fill = "bl
 ```
 
 ```{r}
-h <- ggplot(data2, aes(x = Price, fill = SellerG))
-h + geom_histogram(binwidth = 50000, color = "black", alpha = 0.7) +  # Adjust `binwidth` as needed
+histogram <- ggplot(data2, aes(x = Price, fill = SellerG))
+histogram + geom_histogram(binwidth = 50000, color = "black", alpha = 0.7) +  # Adjust `binwidth` as needed
   labs(
     x = "Price",
     y = "Count",
@@ -168,12 +168,11 @@ h + geom_histogram(binwidth = 50000, color = "black", alpha = 0.7) +  # Adjust `
 
 
 ```{r}
-ggplot(data, aes(x = Lattitude, y = Longtitude)) +
-  geom_bin2d(bins = 50) +
+density <- ggplot(data, aes(x = Lattitude, y = Longtitude))
+density + geom_bin2d(bins = 50) +
   scale_fill_viridis_c() +
   labs(title = "2D Density Plot of Coordinates",
        x = "X Coordinate",
        y = "Y Coordinate") +
   theme(plot.title = element_text(hjust = 0.5))
 ```
-
