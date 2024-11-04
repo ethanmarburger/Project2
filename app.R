@@ -1,7 +1,13 @@
-# Connecting to my shinyapps.io account
-install.packages('rsconnect')
-rsconnect::setAccountInfo(name='ethanmarburger-st558',
-                          token='C02F4F9052D2C20BAFE97D7A2C50802A',
-                          secret='S/mh/enoVcs31ME14peUCsh6u+TUcgkEqrU3F296')
+# Loading appropriate packages
+library(shiny)
+library(rsconnect)
+library(ggplot2)
+library(shinyalert)
+library(tidyverse)
 
-# successfully connected to my account
+# Reading in Melbourne Houseing data (Full dataset)
+
+data <- read_csv("Melbourne_housing_FULL.csv")
+head(data)
+
+#

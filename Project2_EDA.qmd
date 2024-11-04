@@ -105,17 +105,8 @@ data |>
 4) Create at least six plots to visualize the data
 
 ```{r}
-# Box Plot: Price across Home Type
-bp <- ggplot(data |> drop_na(Price, Type))
-bp + geom_boxplot(aes(x = Type, y = Price, fill = Type)) +
-  labs(x = "Home Type", title = "Box Plot: Home Price by Type") +
-  scale_fill_discrete("Type") +
-  theme(plot.title = element_text(hjust = 0.5)) #centering title
-```
-
-```{r}
 # Scatter Plot with faceting: Price and Rooms across Type
-sp <- ggplot(data |> drop_na(Price, Rooms), aes(x = Rooms, y = Price, color = Type))
+sp <- ggplot(data, aes(x = Rooms, y = Price, color = Type))
 sp + geom_point() +
   labs(x = "Rooms", y = "Price", 
        title = "Scatter Plot: Home Price and Number of Rooms by Type") +
@@ -145,5 +136,44 @@ bc + geom_bar(position = "stack") +
        fill = "Home Type") +
   theme(plot.title = element_text(hjust = 0.5)) + # Center title
   theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate labels
+```
+
+```{r}
+# 2D bin Plot for type of home sold per seller in postal code 3067
+data2 <- data[data$Postcode == 3067, ] # Too much data
+h <- ggplot(data2, aes(x = SellerG, y = Type))
+h + geom_bin2d(binwidth = c(0.25, 500), alpha = 0.5, color = "black", fill = "blue", linetype = "solid", linewidth = 0.5) +
+  labs(
+    title = "Type of Home Sold per Seller in Postal Code 3067",
+    x = "Seller",
+    y = "Home Type") +
+  theme(plot.title = element_text(hjust = 0.5))  # Center the title
+```
+
+```{r}
+h <- ggplot(data2, aes(x = Price, fill = SellerG))
+h + geom_histogram(binwidth = 50000, color = "black", alpha = 0.7) +  # Adjust `binwidth` as needed
+  labs(
+    x = "Price",
+    y = "Count",
+    title = "Prices of Homes Sold Across Sellers in Postal Code 3067") +
+  scale_fill_discrete(name = "Sellers") +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    axis.text.x = element_text(angle = 45, hjust = 1)) +# Rotates x-axis labels for readability
+  facet_wrap(~ SellerG)
+
+
+```
+
+
+```{r}
+ggplot(data, aes(x = Lattitude, y = Longtitude)) +
+  geom_bin2d(bins = 50) +
+  scale_fill_viridis_c() +
+  labs(title = "2D Density Plot of Coordinates",
+       x = "X Coordinate",
+       y = "Y Coordinate") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
