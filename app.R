@@ -57,7 +57,7 @@ ui <- fluidPage(
                  p("This data can be found at https://www.kaggle.com/datasets/anthonypino/melbourne-housing-market. Details about the chosen variables can also be found on this website."),
                  p("Use the sidebar to filter data by catagories and download data."),
                  # html tag img not working... needs troubleshooting
-                 img(src = "C:\Users\elmarbur\Documents\Project2\image.jpg", height = "750", width = "562px") # Melbourne Skyline
+                 img(src = "image.jpg", height = "750px", width = "562px") # Melbourne Skyline
                  ),
         
         tabPanel("Data Download",
