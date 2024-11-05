@@ -56,7 +56,8 @@ ui <- fluidPage(
                  p("This R Shiny app allows the user to investigate clearence data from Mebourne's housing market in 2016."),
                  p("This data can be found at https://www.kaggle.com/datasets/anthonypino/melbourne-housing-market. Details about the chosen variables can also be found on this website."),
                  p("Use the sidebar to filter data by catagories and download data."),
-                 img("melbournestay.jpeg", height = "800px", width = "1360px") # Melbourne Skyline
+                 # html tag img not working... needs troubleshooting
+                 img(src = "C:\Users\elmarbur\Documents\Project2\image.jpg", height = "750", width = "562px") # Melbourne Skyline
                  ),
         
         tabPanel("Data Download",
