@@ -6,6 +6,8 @@ library(tidyverse)
 library(shiny)
 library(dplyr)
 library(DT)
+library(shinycssloaders)
+
 
 # Define UI
 ui <- fluidPage(
@@ -63,11 +65,33 @@ ui <- fluidPage(
                  DT::dataTableOutput("table")
                  ),
         
-        tabPanel("Data Exploration", )
+        tabPanel("Data Exploration", # Numeric and graphical summaries noted from the ‘Prepare for Your App’ section
+                 tabsetPanel(
+                   tabPanel("Categorical Summaries",
+                             selectInput("cat_summary_var", "Choose Variables:", choices = c("Suburb", "SellerG")),
+                             selectInput("cat_mod_var", "Subset by:", choices = c("None", "Suburb", "SellerG")),
+                             verbatimTextOutput("cat_summary_output")
+                             ),
+                   
+                   tabPanel("Numerical Summaries",
+                             selectInput("num_summary_var", "Choose Variables:", choices = c("Price", "Rooms", "YearBuilt", "Car")),
+                             selectInput("num_group_var", "Group by:", choices = c("None", "Type", "Suburb")),
+                             verbatimTextOutput("num_summary_output")
+                            ),
+                   
+                   tabPanel("Graphs",
+                             selectInput("x_var", "X-axis:", choices = c("Rooms", "Price", "SellerG")),
+                             selectInput("y_var", "Y-Axis:", choices = c("Price", "Rooms", "CouncilArea")),
+                             selectInput("color_var", "Fill by:", choices = c("None", "Type", "Regionname")),
+                             selectInput("graph_type", "Select Graph Type:", choices = c("Scatter Plot", "Ridge Plot", "Bar Plot", "Bin Plot", "Density Plot", "Histogram")),
+                             withSpinner(plotOutput("plot_output"), type = 1)
+                            ),
+                   )
+                 )
+        )
       )
     )
   )
-)
 
 # Define server logic
 server <- function(input, output, session) {

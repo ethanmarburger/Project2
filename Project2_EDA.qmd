@@ -82,7 +82,6 @@ variables
 
 ```{r}
 # Numerical summary of Price, Rooms, and yearBuilt by Type 
-
 data |>
   group_by(Type) |>
   select(Price, Rooms, YearBuilt) |>
@@ -162,8 +161,6 @@ histogram + geom_histogram(binwidth = 50000, color = "black", alpha = 0.7) +  # 
     plot.title = element_text(hjust = 0.5),
     axis.text.x = element_text(angle = 45, hjust = 1)) +# Rotates x-axis labels for readability
   facet_wrap(~ SellerG)
-
-
 ```
 
 
