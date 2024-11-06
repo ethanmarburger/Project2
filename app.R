@@ -56,13 +56,14 @@ ui <- fluidPage(
                  p("This R Shiny app allows the user to investigate clearence data from Mebourne's housing market in 2016."),
                  p("This data can be found at https://www.kaggle.com/datasets/anthonypino/melbourne-housing-market. Details about the chosen variables can also be found on this website."),
                  p("Use the sidebar to filter data by catagories and download data."),
-                 # html tag img not working... needs troubleshooting
-                 img(src = "image.jpg", height = "750px", width = "562px") # Melbourne Skyline
+                 imageOutput("mel_img") # Melbourne Skyline
                  ),
         
         tabPanel("Data Download",
                  DT::dataTableOutput("table")
-                 )
+                 ),
+        
+        tabPanel("Data Exploration", )
       )
     )
   )
@@ -72,8 +73,7 @@ ui <- fluidPage(
 server <- function(input, output, session) {
   
   # Reactive subset of data based on selected inputs
-  reactive_data <- reactive({
-    req(input$submit) # updates when Submit button is pushed
+  reactive_data <- eventReactive(input$submit, { # updates when Submit button is pushed
     data |>
       filter(Type == input$type,
              Regionname == input$region,
@@ -86,30 +86,45 @@ server <- function(input, output, session) {
   # Reactive slider ranges based on selected numeric variable
   observe({
     variable <- input$num_var
-    min_val <- min(data[[variable]], na.rm = TRUE)
-    max_val <- max(data[[variable]], na.rm = TRUE)
+    min_val <- min(data[[variable]])
+    max_val <- max(data[[variable]])
     
     # Update sliders based on the selected numeric variable's range
     output$room_slider <- renderUI({
-      sliderInput("min_value", paste("Minimum", variable), min = min_val, max = max_val, value = min_val, step = max_val - min_val) # Displaying two values on slider axis
+      sliderInput("min_value", paste("Minimum", variable), min = min_val, max = max_val, value = min_val, step = 1) # Displaying two values on slider axis
     })
     
     output$price_slider <- renderUI({
-      sliderInput("max_value", paste("Maximum", variable), min = min_val, max = max_val, value = max_val, step = max_val - min_val) # Displaying two values on slider axis
+      sliderInput("max_value", paste("Maximum", variable), min = min_val, max = max_val, value = max_val, step = 1) # Displaying two values on slider axis
     })
   })
   
+  # Render Melbourne Image
+  output$mel_img <- renderImage({ 
+    filename <- normalizePath(file.path("www","image.jpg"))
+    
+    list(src = filename,
+         contentType = 'image/jpg',
+         width = 600,
+         height = 800,
+         alt = "Melbourne Skyline")
+  }, deleteFile = FALSE)
+  
+  
   #Rendering data table in the Download tab
   output$table <- DT::renderDataTable({
-    reactiveData()
+    req(reactive_data())
+    reactive_data()
   })
   
   # Saving reactive subset data to a csv file
-  output$downloadData <- downloadHandler(
+  output$download_data <- downloadHandler(
     filename = function() {
-      paste("data_subset", Sys.Date(), ".csv", sep = "")},
+      paste("data_subset", Sys.Date(), ".csv", sep = "")
+      },
     content = function(file) {
-      write.csv(reactiveData(), file)}
+      write.csv(reactive_data(), file)
+    }
   )
 }
 
